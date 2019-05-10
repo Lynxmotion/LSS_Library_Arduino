@@ -1,0 +1,198 @@
+#######################################
+# Syntax Coloring Map For LSS
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+LSS	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+initBus	KEYWORD2
+closeBus	KEYWORD2
+genericWrite	KEYWORD2
+genericRead_Blocking_s16	KEYWORD2
+genericRead_Blocking_str	KEYWORD2
+
+getServoID	KEYWORD2
+setServoID	KEYWORD2
+getLastCommStatus	KEYWORD2
+
+reset	KEYWORD2
+limp	KEYWORD2
+hold	KEYWORD2
+move	KEYWORD2
+moveRelative	KEYWORD2
+wheel	KEYWORD2
+wheelRPM	KEYWORD2
+
+getStatus	KEYWORD2
+getOriginOffset	KEYWORD2
+getAngularRange	KEYWORD2
+getPositionPulse	KEYWORD2
+getPosition	KEYWORD2
+getSpeed	KEYWORD2
+getSpeedRPM	KEYWORD2
+getSpeedPulse	KEYWORD2
+getMaxSpeed	KEYWORD2
+getMaxSpeedRPM	KEYWORD2
+getColorLED	KEYWORD2
+getGyre	KEYWORD2
+getFirstPosition	KEYWORD2
+getIsFirstPositionEnabled	KEYWORD2
+getModel	KEYWORD2
+getSerialNumber	KEYWORD2
+getFirmwareVersion	KEYWORD2
+getVoltage	KEYWORD2
+getTemperature	KEYWORD2
+getCurrent	KEYWORD2
+
+getAngularStiffness	KEYWORD2
+getAngularHoldingStiffness	KEYWORD2
+getAngularAcceleration	KEYWORD2
+getAngularDeceleration	KEYWORD2
+getIsMotionControlEnabled	KEYWORD2
+getBlinkingLED	KEYWORD2
+
+setOriginOffset	KEYWORD2
+setAngularRange	KEYWORD2
+setMaxSpeed	KEYWORD2
+setMaxSpeedRPM	KEYWORD2
+setColorLED	KEYWORD2
+setGyre	KEYWORD2
+setFirstPosition	KEYWORD2
+clearFirstPosition	KEYWORD2
+setMode	KEYWORD2
+
+setAngularStiffness	KEYWORD2
+setAngularHoldingStiffness	KEYWORD2
+setAngularAcceleration	KEYWORD2
+setAngularDeceleration	KEYWORD2
+setIsMotionControlEnabled	KEYWORD2
+setBlinkingLED	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+LSS_MaxTotalCommandLength	LITERAL1
+LSS_Mode255ID	LITERAL1
+LSS_BroadcastID	LITERAL1
+
+LSS_CommandStart	LITERAL1
+LSS_CommandReplyStart	LITERAL1
+LSS_CommandEnd	LITERAL1
+
+LSS_LastCommStatus	LITERAL1
+LSS_CommStatus_Idle	LITERAL1
+LSS_CommStatus_ReadSuccess	LITERAL1
+LSS_CommStatus_ReadTimeout	LITERAL1
+LSS_CommStatus_ReadWrongID	LITERAL1
+LSS_CommStatus_ReadWrongIdentifier	LITERAL1
+LSS_CommStatus_ReadWrongFormat	LITERAL1
+LSS_CommStatus_ReadNoBus	LITERAL1
+LSS_CommStatus_ReadUnknown	LITERAL1
+LSS_CommStatus_WriteSuccess	LITERAL1
+LSS_CommStatus_WriteNoBus	LITERAL1
+LSS_CommStatus_WriteUnknown	LITERAL1
+
+LSS_Status	LITERAL1
+LSS_StatusUnknown	LITERAL1
+LSS_StatusLimp	LITERAL1
+LSS_StatusFreeMoving	LITERAL1
+LSS_StatusAccelerating	LITERAL1
+LSS_StatusTravelling	LITERAL1
+LSS_StatusDecelerating	LITERAL1
+LSS_StatusHolding	LITERAL1
+LSS_StatusOutsideLimits	LITERAL1
+LSS_StatusStuck	LITERAL1
+LSS_StatusBlocked	LITERAL1
+LSS_StatusSafeMode	LITERAL1
+LSS_StatusLast	LITERAL1
+
+LSS_Model	LITERAL1
+LSS_ModelHighTorque	LITERAL1
+LSS_ModelStandard	LITERAL1
+LSS_ModelHighSpeed	LITERAL1
+LSS_ModelUnknown	LITERAL1
+
+LSS_QueryType	LITERAL1
+LSS_QuerySession	LITERAL1
+LSS_QueryConfig	LITERAL1
+LSS_QueryInstantaneousSpeed	LITERAL1
+LSS_QueryTargetTravelSpeed	LITERAL1
+
+LSS_SetType	LITERAL1
+LSS_SetSession	LITERAL1
+LSS_SetConfig	LITERAL1
+
+LSS_ConfigMode	LITERAL1
+LSS_ModeSerial	LITERAL1
+LSS_ModePositionRC	LITERAL1
+LSS_ModeWheelRC	LITERAL1
+
+LSS_ConfigGyre	LITERAL1
+LSS_GyreClockwise	LITERAL1
+LSS_GyreCounterClockwise	LITERAL1
+
+LSS_LED_Color	LITERAL1
+LSS_LED_Black	LITERAL1
+LSS_LED_Red	LITERAL1
+LSS_LED_Green	LITERAL1
+LSS_LED_Blue	LITERAL1
+LSS_LED_Yellow	LITERAL1
+LSS_LED_Cyan	LITERAL1
+LSS_LED_Magenta	LITERAL1
+LSS_LED_White	LITERAL1
+
+LSS_ActionReset	LITERAL1
+LSS_ActionLimp	LITERAL1
+LSS_ActionHold	LITERAL1
+LSS_ActionMove	LITERAL1
+LSS_ActionMoveRelative	LITERAL1
+LSS_ActionWheel	LITERAL1
+LSS_ActionWheelRPM	LITERAL1
+
+LSS_QueryStatus	LITERAL1
+LSS_QueryOriginOffset	LITERAL1
+LSS_QueryAngularRange	LITERAL1
+LSS_QueryPositionPulse	LITERAL1
+LSS_QueryPosition	LITERAL1
+LSS_QuerySpeed	LITERAL1
+LSS_QuerySpeedRPM	LITERAL1
+LSS_QuerySpeedPulse	LITERAL1
+LSS_QueryMaxSpeed	LITERAL1
+LSS_QueryMaxSpeedRPM	LITERAL1
+LSS_QueryColorLED	LITERAL1
+LSS_QueryGyre	LITERAL1
+LSS_QueryID	LITERAL1
+LSS_QueryBaud	LITERAL1
+LSS_QueryFirstPosition	LITERAL1
+LSS_QueryModelString	LITERAL1
+LSS_QuerySerialNumber	LITERAL1
+LSS_QueryFirmwareVersion	LITERAL1
+LSS_QueryVoltage	LITERAL1
+LSS_QueryTemperature	LITERAL1
+LSS_QueryCurrent	LITERAL1
+
+LSS_ConfigID	LITERAL1
+LSS_ConfigBaud	LITERAL1
+LSS_ConfigOrigin	LITERAL1
+LSS_ConfigAngularRange	LITERAL1
+LSS_ConfigMaxSpeed	LITERAL1
+LSS_ConfigMaxSpeedRPM	LITERAL1
+LSS_ConfigColorLED	LITERAL1
+LSS_ConfigGyreDirection	LITERAL1
+LSS_ConfigFirstPosition	LITERAL1
+LSS_ConfigAngularStiffness	LITERAL1
+LSS_ConfigAngularHoldingStiffness	LITERAL1
+LSS_ConfigAngularAcceleration	LITERAL1
+LSS_ConfigAngularDeceleration	LITERAL1
+LSS_ConfigBlinkingLED	LITERAL1
