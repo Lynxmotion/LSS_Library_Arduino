@@ -20,11 +20,11 @@ void setup()
 	// Initialize the LSS bus
 	LSS::initBus(Serial, LSS_BAUD);
 
-  // wait LSS to boot
-  delay(2000);
-	// move LSS continuously
+	// Wait for the LSS to boot
+	delay(2000);
+	
+	// Move the LSS continuously in one direction
 	myLSS.wheelRPM(100);
-
 }
 
 void loop()
