@@ -1,6 +1,6 @@
 /*
  *	Author:			Sebastien Parent-Charette (support@robotshop.com)
- *	Version:		1.0.0
+ *	Version:		1.1.0
  *	Licence:		LGPL-3.0 (GNU Lesser General Public License version 3)
  *	
  *	Desscription:	Basic example of reading values from the LSS and placing

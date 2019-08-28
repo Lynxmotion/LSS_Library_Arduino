@@ -1,11 +1,11 @@
 /*
  *	Author:			Sebastien Parent-Charette (support@robotshop.com)
- *	Version:		1.0.0
+ *	Version:		1.1.0
  *	Licence:		LGPL-3.0 (GNU Lesser General Public License version 3)
  *	
  *	Desscription:	A library that makes using the LSS simple.
- *					Offers support for both Arduino Uno, Mega and others through
- *					the use of the Stream class for communication.
+ *					Offers support for Arduino Uno, Mega and others through
+ *					the use of the Stream class for serial communication.
 */
 
 // Required main library
