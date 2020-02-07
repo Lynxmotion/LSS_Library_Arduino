@@ -4,7 +4,7 @@
  *	Licence:		LGPL-3.0 (GNU Lesser General Public License version 3)
  *	
  *	Desscription:	Basic example of the LSS moving back and forth.
-*/
+ */
 
 #include <LSS.h>
 
@@ -32,13 +32,13 @@ void loop()
 {
 	// Send LSS to half a turn counter-clockwise from zero (assumes gyre = 1)
 	myLSS.move(-1800);
-	
+
 	// Wait for one second
 	delay(2000);
-	
+
 	// Send LSS to half a turn clockwise from zero (assumes gyre = 1)
 	myLSS.move(1800);
-	
+
 	// Wait for one second
 	delay(2000);
 }

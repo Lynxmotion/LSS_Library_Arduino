@@ -50,6 +50,9 @@ getFirmwareVersion	KEYWORD2
 getVoltage	KEYWORD2
 getTemperature	KEYWORD2
 getCurrent	KEYWORD2
+getAnalog	KEYWORD2
+getDistance_mm	KEYWORD2
+getDistance_inches	KEYWORD2
 
 getAngularStiffness	KEYWORD2
 getAngularHoldingStiffness	KEYWORD2
@@ -128,6 +131,11 @@ LSS_QuerySession	LITERAL1
 LSS_QueryConfig	LITERAL1
 LSS_QueryInstantaneousSpeed	LITERAL1
 LSS_QueryTargetTravelSpeed	LITERAL1
+
+LSS_QueryTypeDistance	LITERAL1
+LSS_Query_Sharp_GP2Y0A41SK0F	LITERAL1
+LSS_Query_Sharp_GP2Y0A21YK0F	LITERAL1
+LSS_Query_Sharp_GP2Y0A02YK0F	LITERAL1
 
 LSS_SetType	LITERAL1
 LSS_SetSession	LITERAL1

@@ -5,7 +5,7 @@
  *	
  *	Desscription:	Basic example of reading values from the LSS and placing
  *					them on the terminal.
-*/
+ */
 
 #include <LSS.h>
 
@@ -38,12 +38,17 @@ void loop()
 	Serial.println("\r\n\r\n---- LSS telemetry ----");
 
 	// Display LSS position, speed, current, voltage, temperature
-	Serial.print("Position  (1/10 deg) = "); Serial.println(pos);
-	Serial.print("Speed          (rpm) = "); Serial.println(rpm);
-	Serial.print("Curent          (mA) = "); Serial.println(current);
-	Serial.print("Voltage         (mV) = "); Serial.println(voltage);
-    Serial.print("Temperature (1/10 C) = "); Serial.println(temp);
-    
+	Serial.print("Position  (1/10 deg) = ");
+	Serial.println(pos);
+	Serial.print("Speed          (rpm) = ");
+	Serial.println(rpm);
+	Serial.print("Curent          (mA) = ");
+	Serial.println(current);
+	Serial.print("Voltage         (mV) = ");
+	Serial.println(voltage);
+	Serial.print("Temperature (1/10 C) = ");
+	Serial.println(temp);
+
 	// Read LSS telemetry once per second
 	delay(1000);
 }

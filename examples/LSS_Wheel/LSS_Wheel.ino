@@ -4,7 +4,7 @@
  *	Licence:		LGPL-3.0 (GNU Lesser General Public License version 3)
  *	
  *	Desscription:	Basic example of the LSS rotating continuously.
-*/
+ */
 
 #include <LSS.h>
 
@@ -22,7 +22,7 @@ void setup()
 
 	// Wait for the LSS to boot
 	delay(2000);
-	
+
 	// Move the LSS continuously in one direction
 	myLSS.wheelRPM(100);
 }

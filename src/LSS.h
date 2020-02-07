@@ -1,12 +1,12 @@
 /*
  *	Author:			Sebastien Parent-Charette (support@robotshop.com)
- *	Version:		1.1.0
+ *	Version:		1.2.0
  *	Licence:		LGPL-3.0 (GNU Lesser General Public License version 3)
  *	
  *	Desscription:	A library that makes using the LSS simple.
  *					Offers support for both Arduino Uno, Mega and others through
  *					the use of the Stream class for communication.
-*/
+ */
 
 // Ensure this library description is only included once
 #ifndef LSS_H
@@ -19,11 +19,11 @@
 
 // Ensure compatibility
 #if (ARDUINO >= 100)
-	#include "Arduino.h"
+#include "Arduino.h"
 #else
-	#include "WProgram.h"
-	#include "pins_arduino.h"
-	#include "WConstants.h"
+#include "WProgram.h"
+#include "pins_arduino.h"
+#include "WConstants.h"
 #endif
 
 // Other requirements
@@ -46,7 +46,7 @@
 //> Bus communication
 #define LSS_DefaultBaud				(115200)
 #define LSS_MaxTotalCommandLength	(30 + 1)	// ex: #999XXXX-2147483648\r; Adding 1 for end string char (\0)
-												// ex: #999XX000000000000000000\r;
+// ex: #999XX000000000000000000\r;
 #define LSS_Timeout					100		// in ms
 #define LSS_CommandStart			("#")
 #define LSS_CommandReplyStart		("*")
@@ -108,6 +108,14 @@ enum LSS_QueryType
 	LSS_QueryConfig = 1,
 	LSS_QueryInstantaneousSpeed = 2,
 	LSS_QueryTargetTravelSpeed = 3
+};
+
+//> Parameter for query distance sensor
+enum LSS_QueryTypeDistance
+{
+	LSS_Query_Sharp_GP2Y0A41SK0F = 1,
+	LSS_Query_Sharp_GP2Y0A21YK0F = 2,
+	LSS_Query_Sharp_GP2Y0A02YK0F = 3
 };
 
 //> Parameter for setter
@@ -193,6 +201,7 @@ enum LSS_LED_Color
 #define LSS_QueryVoltage			("QV")
 #define LSS_QueryTemperature		("QT")
 #define LSS_QueryCurrent			("QC")
+#define LSS_QueryAnalog				("QA")
 
 //> Commands - queries (advanced)
 #define LSS_QueryAngularStiffness			("QAS")
@@ -224,113 +233,115 @@ enum LSS_LED_Color
 // library interface description
 class LSS
 {
-	public:
-		// Public functions - Class
-		static int timedRead(void);
-		bool charToInt(char * inputstr, int32_t * intnum);
-		//static void initBus(Stream &, uint32_t);
+public:
+	// Public functions - Class
+	static int timedRead(void);
+	bool charToInt(char * inputstr, int32_t * intnum);
+	//static void initBus(Stream &, uint32_t);
 #ifdef LSS_SupportSoftwareSerial
-		static void initBus(SoftwareSerial & s, uint32_t baud);
+	static void initBus(SoftwareSerial & s, uint32_t baud);
 #endif
-		static void initBus(HardwareSerial & s, uint32_t baud);
-		static void closeBus(void);
-		static bool genericWrite(uint8_t id, char * cmd);
-		static bool genericWrite(uint8_t id, char * cmd, int16_t value);
-		static int16_t genericRead_Blocking_s16(uint8_t id, char * cmd);
-		static char * genericRead_Blocking_str(uint8_t id, char * cmd);
-		
-		// Public attributes - Class
-		
-		// Public functions - Instance
-		//> Constructors/destructor
-		LSS();
-		LSS(uint8_t);
-		~LSS(void);
-		
-		//> Get/set for private attributes
-		uint8_t getServoID(void);
-		void setServoID(uint8_t);
-		LSS_LastCommStatus getLastCommStatus(void);
-		
-		//> Actions
-		bool reset(void);
-		bool limp(void);
-		bool hold(void);
-		bool move(int16_t value);
-		bool moveRelative(int16_t value);
-		bool wheel(int16_t value);
-		bool wheelRPM(int8_t value);
-		
-		//> Queries
-		// uint8_t getID(void);
-		// uint8_t getBaud(void);
-		LSS_Status getStatus(void);
-		int16_t getOriginOffset(LSS_QueryType queryType = LSS_QuerySession);
-		uint16_t getAngularRange(LSS_QueryType queryType = LSS_QuerySession);
-		uint16_t getPositionPulse(void);
-		int32_t getPosition(void);
-		int16_t getSpeed(void);
-		int8_t getSpeedRPM(void);
-		int8_t getSpeedPulse(void);
-		uint16_t getMaxSpeed(LSS_QueryType queryType = LSS_QuerySession);
-		int8_t getMaxSpeedRPM(LSS_QueryType queryType = LSS_QuerySession);
-		LSS_LED_Color getColorLED(LSS_QueryType queryType = LSS_QuerySession);
-		LSS_ConfigGyre getGyre(LSS_QueryType queryType = LSS_QuerySession);
-		int16_t getFirstPosition(void);
-		bool getIsFirstPositionEnabled(void);
-		LSS_Model getModel(void);
-		char * getSerialNumber(void);
-		uint16_t getFirmwareVersion(void);
-		uint16_t getVoltage(void);
-		uint16_t getTemperature(void);
-		uint16_t getCurrent(void);
-		
-		//> Queries (advanced)
-		int8_t getAngularStiffness(LSS_QueryType queryType = LSS_QuerySession);
-		int8_t getAngularHoldingStiffness(LSS_QueryType queryType = LSS_QuerySession);
-		int16_t getAngularAcceleration(LSS_QueryType queryType = LSS_QuerySession);
-		int16_t getAngularDeceleration(LSS_QueryType queryType = LSS_QuerySession);
-		bool getIsMotionControlEnabled(void);
-		uint8_t getBlinkingLED(void);
-		
-		//> Configs
-		bool setOriginOffset(int16_t value, LSS_SetType setType = LSS_SetSession);
-		bool setAngularRange(uint16_t value, LSS_SetType setType = LSS_SetSession);
-		bool setMaxSpeed(uint16_t value, LSS_SetType setType = LSS_SetSession);
-		bool setMaxSpeedRPM(int8_t value, LSS_SetType setType = LSS_SetSession);
-		bool setColorLED(LSS_LED_Color value, LSS_SetType setType = LSS_SetSession);
-		bool setGyre(LSS_ConfigGyre value, LSS_SetType setType = LSS_SetSession);
-		bool setFirstPosition(int16_t value);
-		bool clearFirstPosition(void);
-		bool setMode(LSS_ConfigMode value);
-		
-		//> Configs (advanced)
-		bool setAngularStiffness(int8_t value, LSS_SetType setType = LSS_SetSession);
-		bool setAngularHoldingStiffness(int8_t value, LSS_SetType setType = LSS_SetSession);
-		bool setAngularAcceleration(int16_t value, LSS_SetType setType = LSS_SetSession);
-		bool setAngularDeceleration(int16_t value, LSS_SetType setType = LSS_SetSession);
-		bool setMotionControlEnabled(bool value);
-		bool setBlinkingLED(uint8_t value);
-		
-		// Public attributes - Instance
-		
-	private:
-		// Private functions - Class
-		
-		// Private attributes - Class
-		static bool hardwareSerial;
-		static Stream * bus;
-		static LSS_LastCommStatus lastCommStatus;
-		static char cmdBuffer[LSS_MaxTotalCommandLength];
-		static volatile int8_t cmdBufferSize;
-		static volatile uint8_t readID;
-		static volatile uint8_t identSize;
-		static char value[24];
-		
-		// Private functions - Instance
-		
-		// Private attributes - Instance
-		uint8_t servoID = LSS_ID_Default;
+	static void initBus(HardwareSerial & s, uint32_t baud);
+	static void closeBus(void);
+	static bool genericWrite(uint8_t id, char * cmd);
+	static bool genericWrite(uint8_t id, char * cmd, int16_t value);
+	static int16_t genericRead_Blocking_s16(uint8_t id, char * cmd);
+	static char * genericRead_Blocking_str(uint8_t id, char * cmd);
+
+	// Public attributes - Class
+
+	// Public functions - Instance
+	//> Constructors/destructor
+	LSS();
+	LSS (uint8_t);
+	~LSS(void);
+
+	//> Get/set for private attributes
+	uint8_t getServoID(void);
+	void setServoID(uint8_t);
+	LSS_LastCommStatus getLastCommStatus(void);
+
+	//> Actions
+	bool reset(void);
+	bool limp(void);
+	bool hold(void);
+	bool move(int16_t value);
+	bool moveRelative(int16_t value);
+	bool wheel(int16_t value);
+	bool wheelRPM(int8_t value);
+
+	//> Queries
+	// uint8_t getID(void);
+	// uint8_t getBaud(void);
+	LSS_Status getStatus(void);
+	int16_t getOriginOffset(LSS_QueryType queryType = LSS_QuerySession);
+	uint16_t getAngularRange(LSS_QueryType queryType = LSS_QuerySession);
+	uint16_t getPositionPulse(void);
+	int32_t getPosition(void);
+	int16_t getSpeed(void);
+	int8_t getSpeedRPM(void);
+	int8_t getSpeedPulse(void);
+	uint16_t getMaxSpeed(LSS_QueryType queryType = LSS_QuerySession);
+	int8_t getMaxSpeedRPM(LSS_QueryType queryType = LSS_QuerySession);
+	LSS_LED_Color getColorLED(LSS_QueryType queryType = LSS_QuerySession);
+	LSS_ConfigGyre getGyre(LSS_QueryType queryType = LSS_QuerySession);
+	int16_t getFirstPosition(void);
+	bool getIsFirstPositionEnabled(void);
+	LSS_Model getModel(void);
+	char * getSerialNumber(void);
+	uint16_t getFirmwareVersion(void);
+	uint16_t getVoltage(void);
+	uint16_t getTemperature(void);
+	uint16_t getCurrent(void);
+	uint16_t getAnalog(void);
+	uint16_t getDistance_mm(LSS_QueryTypeDistance queryTypeDistance);
+
+	//> Queries (advanced)
+	int8_t getAngularStiffness(LSS_QueryType queryType = LSS_QuerySession);
+	int8_t getAngularHoldingStiffness(LSS_QueryType queryType = LSS_QuerySession);
+	int16_t getAngularAcceleration(LSS_QueryType queryType = LSS_QuerySession);
+	int16_t getAngularDeceleration(LSS_QueryType queryType = LSS_QuerySession);
+	bool getIsMotionControlEnabled(void);
+	uint8_t getBlinkingLED(void);
+
+	//> Configs
+	bool setOriginOffset(int16_t value, LSS_SetType setType = LSS_SetSession);
+	bool setAngularRange(uint16_t value, LSS_SetType setType = LSS_SetSession);
+	bool setMaxSpeed(uint16_t value, LSS_SetType setType = LSS_SetSession);
+	bool setMaxSpeedRPM(int8_t value, LSS_SetType setType = LSS_SetSession);
+	bool setColorLED(LSS_LED_Color value, LSS_SetType setType = LSS_SetSession);
+	bool setGyre(LSS_ConfigGyre value, LSS_SetType setType = LSS_SetSession);
+	bool setFirstPosition(int16_t value);
+	bool clearFirstPosition(void);
+	bool setMode(LSS_ConfigMode value);
+
+	//> Configs (advanced)
+	bool setAngularStiffness(int8_t value, LSS_SetType setType = LSS_SetSession);
+	bool setAngularHoldingStiffness(int8_t value, LSS_SetType setType = LSS_SetSession);
+	bool setAngularAcceleration(int16_t value, LSS_SetType setType = LSS_SetSession);
+	bool setAngularDeceleration(int16_t value, LSS_SetType setType = LSS_SetSession);
+	bool setMotionControlEnabled(bool value);
+	bool setBlinkingLED(uint8_t value);
+
+	// Public attributes - Instance
+
+private:
+	// Private functions - Class
+
+	// Private attributes - Class
+	static bool hardwareSerial;
+	static Stream * bus;
+	static LSS_LastCommStatus lastCommStatus;
+	static char cmdBuffer[LSS_MaxTotalCommandLength];
+	static volatile int8_t cmdBufferSize;
+	static volatile uint8_t readID;
+	static volatile uint8_t identSize;
+	static char value[24];
+
+	// Private functions - Instance
+
+	// Private attributes - Instance
+	uint8_t servoID = LSS_ID_Default;
 };
 
 #endif
