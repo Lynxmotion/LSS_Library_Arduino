@@ -26,7 +26,10 @@ reset	KEYWORD2
 limp	KEYWORD2
 hold	KEYWORD2
 move	KEYWORD2
+moveT	KEYWORD2
+moveCH	KEYWORD2
 moveRelative	KEYWORD2
+moveRelativeT	KEYWORD2
 wheel	KEYWORD2
 wheelRPM	KEYWORD2
 

@@ -263,6 +263,42 @@ static bool LSS::genericWrite(uint8_t id, char * cmd, int16_t value)
 	return (true);
 }
 
+// Build & write a LSS command to the bus using the provided ID and value
+// Max size for cmd = (LSS_MaxTotalCommandLength - 1)
+static bool LSS::genericWrite(uint8_t id, char * cmd, int16_t value, char * parameter, int16_t parameter_value)
+{
+	// Exit condition
+	if (bus == (Stream*) nullptr)
+	{
+		lastCommStatus = LSS_CommStatus_WriteNoBus;
+		return (false);
+	}
+
+	// Build command
+	cmdBufferSize = snprintf(cmdBuffer, LSS_MaxTotalCommandLength, "%s%u%s%i%s%i%s",
+	// Command start
+			LSS_CommandStart,
+			// Servo ID
+			id,
+			// Command
+			cmd,
+			// Value
+			value,
+			// Parameter
+			parameter,
+			// Parameter Value
+			parameter_value,
+			// Command end
+			LSS_CommandEnd);
+
+	// Send command to bus
+	bus->write(cmdBuffer);
+
+	// Success
+	lastCommStatus = LSS_CommStatus_WriteSuccess;
+	return (true);
+}
+
 static int16_t LSS::genericRead_Blocking_s16(uint8_t id, char * cmd)
 {
 	// Exit condition
@@ -504,10 +540,28 @@ bool LSS::move(int16_t value)
 	return (LSS::genericWrite(this->servoID, LSS_ActionMove, value));
 }
 
+// Make LSS move to specified position in 1/10° with T parameter
+bool LSS::moveT(int16_t value, int16_t t_value)
+{
+	return (LSS::genericWrite(this->servoID, LSS_ActionMove, value, LSS_ActionParameterTime, t_value));
+}
+
+// Make LSS move to specified position in 1/10° with CH parameter
+bool LSS::moveCH(int16_t value, int16_t ch_value)
+{
+	return (LSS::genericWrite(this->servoID, LSS_ActionMove, value, LSS_ActionParameterCurrentHold, ch_value));
+}
+
 // Perform relative move by specified amount of 1/10°
 bool LSS::moveRelative(int16_t value)
 {
 	return (LSS::genericWrite(this->servoID, LSS_ActionMoveRelative, value));
+}
+
+// Perform relative move by specified amount of 1/10° with T parameter
+bool LSS::moveRelativeT(int16_t value, int16_t t_value)
+{
+	return (LSS::genericWrite(this->servoID, LSS_ActionMoveRelative, value, LSS_ActionParameterTime, t_value));
 }
 
 // Make LSS rotate at set speed in (1/10°)/s
