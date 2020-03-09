@@ -158,6 +158,7 @@ enum LSS_LED_Color
 #define LSS_ActionLimp				("L")
 #define LSS_ActionHold				("H")
 #define LSS_ActionParameterTime		("T")
+#define LSS_ActionParameterCurrentHold		("CH")
 #define LSS_ActionParameterSpeed	("S")
 #define LSS_ActionMove				("D")
 #define LSS_ActionMoveRelative		("MD")
@@ -245,6 +246,7 @@ public:
 	static void closeBus(void);
 	static bool genericWrite(uint8_t id, char * cmd);
 	static bool genericWrite(uint8_t id, char * cmd, int16_t value);
+	static bool genericWrite(uint8_t id, char * cmd, int16_t value, char * parameter, int16_t parameter_value);
 	static int16_t genericRead_Blocking_s16(uint8_t id, char * cmd);
 	static char * genericRead_Blocking_str(uint8_t id, char * cmd);
 
@@ -266,7 +268,10 @@ public:
 	bool limp(void);
 	bool hold(void);
 	bool move(int16_t value);
+	bool moveT(int16_t value, int16_t t_value);
+	bool moveCH(int16_t value, int16_t ch_value);
 	bool moveRelative(int16_t value);
+	bool moveRelativeT(int16_t value, int16_t t_value);
 	bool wheel(int16_t value);
 	bool wheelRPM(int8_t value);
 
