@@ -3,7 +3,7 @@
  *	Version:		1.1.0
  *	Licence:		LGPL-3.0 (GNU Lesser General Public License version 3)
  *	
- *	Desscription: Moves one LSS using the position of a second LSS.
+ *	Description: Moves one LSS using the position of a second LSS.
  */
 
 #include <LSS.h>
