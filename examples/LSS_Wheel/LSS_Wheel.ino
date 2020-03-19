@@ -3,7 +3,7 @@
  *	Version:		1.1.0
  *	Licence:		LGPL-3.0 (GNU Lesser General Public License version 3)
  *	
- *	Desscription:	Basic example of the LSS rotating continuously.
+ *	Description:	Basic example of the LSS rotating continuously.
  */
 
 #include <LSS.h>
