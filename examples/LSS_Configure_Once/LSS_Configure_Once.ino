@@ -3,7 +3,7 @@
  *	Version:		1.1.0
  *	Licence:		LGPL-3.0 (GNU Lesser General Public License version 3)
  *	
- *	Desscription:	Example of all the possible configurations for a LSS.
+ *	Description:	Example of all the possible configurations for a LSS.
  */
 
 #include <LSS.h>
@@ -33,7 +33,7 @@ void setup()
 	//myLSS.setAngularRange(uint16_t value, LSS_SetType setType = LSS_SetConfig);
 
 	//> https://www.robotshop.com/info/wiki/lynxmotion/view/lynxmotion-smart-servo/lss-communication-protocol/#H12.MaxSpeedinDegrees28SD29
-	// Set maximum speed in (1/10°)/s
+	// Set maximum speed in (1/10Â°)/s
 	//myLSS.setMaxSpeed(600, LSS_SetConfig);
 
 	//> https://www.robotshop.com/info/wiki/lynxmotion/view/lynxmotion-smart-servo/lss-communication-protocol/#H13.MaxSpeedinRPM28SR29
