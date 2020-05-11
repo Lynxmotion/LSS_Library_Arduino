@@ -14,16 +14,13 @@
 // -- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 // Class attributes instantiation   ---- ---- ---- ---- ---- ---- ---- ---- ----
 //> Bus & status related
-static bool LSS::hardwareSerial;
-static Stream * LSS::bus;
-static LSS_LastCommStatus LSS::lastCommStatus = LSS_CommStatus_Idle;
+bool LSS::hardwareSerial;
+Stream * LSS::bus;
+LSS_LastCommStatus LSS::lastCommStatus = LSS_CommStatus_Idle;
 
 //> Command reading/writing
-static char LSS::cmdBuffer[LSS_MaxTotalCommandLength];
-static volatile int8_t LSS::cmdBufferSize;
-static volatile uint8_t LSS::readID;
-static volatile uint8_t LSS::identSize;
-static char LSS::value[24];
+volatile unsigned int LSS::readID;  // sscanf - assumes this
+char LSS::value[24];
 
 // -- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 // Constructor  ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
@@ -49,7 +46,7 @@ LSS::~LSS(void)
 // -- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 // Public functions (class)    ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
-static int LSS::timedRead(void)
+int LSS::timedRead(void)
 {
 	int c;
 	unsigned long startMillis = millis();
@@ -67,6 +64,8 @@ bool LSS::charToInt(char * inputstr, int32_t * intnum)
 	uint8_t neg = 0, i = 0, j = 0;  //, res = 0;
 	int32_t val = 0;
 	bool err;
+
+	if (!inputstr) return true;
 
 	if (inputstr[0] == '0' && (inputstr[1] == 'x' || inputstr[1] == 'X'))
 	{
@@ -164,7 +163,7 @@ bool LSS::charToInt(char * inputstr, int32_t * intnum)
 
 #ifdef LSS_SupportSoftwareSerial
 // Initialize bus using a software serial
-static void LSS::initBus(SoftwareSerial &s, uint32_t baud)
+void LSS::initBus(SoftwareSerial &s, uint32_t baud)
 {
 	bus = &s;
 	bus->setTimeout(LSS_Timeout);
@@ -175,7 +174,7 @@ static void LSS::initBus(SoftwareSerial &s, uint32_t baud)
 #endif
 
 // Initialize bus using a hardware serial
-static void LSS::initBus(HardwareSerial &s, uint32_t baud)
+void LSS::initBus(HardwareSerial &s, uint32_t baud)
 {
 	bus = &s;
 	bus->setTimeout(LSS_Timeout);
@@ -184,7 +183,7 @@ static void LSS::initBus(HardwareSerial &s, uint32_t baud)
 }
 
 // Close the bus (stream), free pins and null reference
-static void LSS::closeBus(void)
+void LSS::closeBus(void)
 {
 #ifdef LSS_SupportSoftwareSerial
 	if (hardwareSerial)
@@ -203,7 +202,7 @@ static void LSS::closeBus(void)
 
 // Build & write a LSS command to the bus using the provided ID (no value)
 // Max size for cmd = (LSS_MaxTotalCommandLength - 1)
-static bool LSS::genericWrite(uint8_t id, char * cmd)
+bool LSS::genericWrite(uint8_t id, const char * cmd)
 {
 	// Exit condition
 	if (bus == (Stream*) nullptr)
@@ -213,19 +212,13 @@ static bool LSS::genericWrite(uint8_t id, char * cmd)
 	}
 
 	// Build command
-	cmdBufferSize = snprintf(cmdBuffer, LSS_MaxTotalCommandLength, "%s%u%s%s",
-	// Command start
-			LSS_CommandStart,
-			// Servo ID
-			id,
-			// Command
-			cmd,
-			// Command end
-			LSS_CommandEnd);
-
-	// Send command to bus
-	bus->write(cmdBuffer);
-
+	bus->write('#');
+	// Servo ID
+	bus->print(id, DEC);
+	// Command
+	bus->write(cmd);
+	// Command end
+	bus->write('\r');
 	// Success
 	lastCommStatus = LSS_CommStatus_WriteSuccess;
 	return (true);
@@ -233,7 +226,7 @@ static bool LSS::genericWrite(uint8_t id, char * cmd)
 
 // Build & write a LSS command to the bus using the provided ID and value
 // Max size for cmd = (LSS_MaxTotalCommandLength - 1)
-static bool LSS::genericWrite(uint8_t id, char * cmd, int16_t value)
+bool LSS::genericWrite(uint8_t id, const char * cmd, int16_t value)
 {
 	// Exit condition
 	if (bus == (Stream*) nullptr)
@@ -242,22 +235,15 @@ static bool LSS::genericWrite(uint8_t id, char * cmd, int16_t value)
 		return (false);
 	}
 
-	// Build command
-	cmdBufferSize = snprintf(cmdBuffer, LSS_MaxTotalCommandLength, "%s%u%s%i%s",
-	// Command start
-			LSS_CommandStart,
-			// Servo ID
-			id,
-			// Command
-			cmd,
-			// Value
-			value,
-			// Command end
-			LSS_CommandEnd);
-
-	// Send command to bus
-	bus->write(cmdBuffer);
-
+	bus->write('#');
+	// Servo ID
+	bus->print(id, DEC);
+	// Command
+	bus->write(cmd);
+	// Value
+	bus->print(value, DEC);
+	// Command end
+	bus->write('\r');
 	// Success
 	lastCommStatus = LSS_CommStatus_WriteSuccess;
 	return (true);
@@ -265,7 +251,7 @@ static bool LSS::genericWrite(uint8_t id, char * cmd, int16_t value)
 
 // Build & write a LSS command to the bus using the provided ID and value
 // Max size for cmd = (LSS_MaxTotalCommandLength - 1)
-static bool LSS::genericWrite(uint8_t id, char * cmd, int16_t value, char * parameter, int16_t parameter_value)
+bool LSS::genericWrite(uint8_t id, const char * cmd, int16_t value, const char * parameter, int16_t parameter_value)
 {
 	// Exit condition
 	if (bus == (Stream*) nullptr)
@@ -274,220 +260,139 @@ static bool LSS::genericWrite(uint8_t id, char * cmd, int16_t value, char * para
 		return (false);
 	}
 
-	// Build command
-	cmdBufferSize = snprintf(cmdBuffer, LSS_MaxTotalCommandLength, "%s%u%s%i%s%i%s",
-	// Command start
-			LSS_CommandStart,
-			// Servo ID
-			id,
-			// Command
-			cmd,
-			// Value
-			value,
-			// Parameter
-			parameter,
-			// Parameter Value
-			parameter_value,
-			// Command end
-			LSS_CommandEnd);
-
-	// Send command to bus
-	bus->write(cmdBuffer);
-
+	bus->write('#');
+	// Servo ID
+	bus->print(id, DEC);
+	// Command
+	bus->print(cmd);
+	// Value
+	bus->print(value, DEC);
+	bus->write(parameter);
+	// Parameter Value
+	bus->print(parameter_value, DEC);
+	// Command end
+	bus->write('\r');
 	// Success
 	lastCommStatus = LSS_CommStatus_WriteSuccess;
 	return (true);
 }
-
-static int16_t LSS::genericRead_Blocking_s16(uint8_t id, char * cmd)
+//==============================================================================
+char * LSS::genericRead_Blocking_str(uint8_t id, const char * cmd)
 {
 	// Exit condition
 	if (bus == (Stream*) nullptr)
 	{
 		lastCommStatus = LSS_CommStatus_ReadNoBus;
-		return (0);
+		return ((char *) nullptr);
 	}
 
-	// Variables
-	int16_t value; // Cannot use int32_t; will need alternative to read larger integers, such as the serial number, position
-	identSize = strlen(cmd);
-	char ident[5];
-	//char ident[identSize+1];
+	// 
 
 	// Read from bus until first character; exit if not found before timeout
 	if (!(bus->find(LSS_CommandReplyStart)))
 	{
 		lastCommStatus = LSS_CommStatus_ReadTimeout;
-		return (0);
+		return ((char *) nullptr);
 	}
 
-	// Read from bus until last character; exit if last character is not found before timeout
-	cmdBufferSize = bus->readBytesUntil(LSS_CommandEnd, cmdBuffer, (LSS_MaxTotalCommandLength - 1));
-	if (cmdBufferSize == 0)
+	// Ok we have the * now now lets get the servo ID from the message.
+	readID = 0;
+	int c;
+	bool valid_field = 0;
+	while ((c = LSS::timedRead()) >= 0)
 	{
-		lastCommStatus = LSS_CommStatus_ReadTimeout;
-		return (0);
-	}
-	// Add null terminator
-	cmdBuffer[cmdBufferSize] = 0;
-
-	// Parse result; exit if error (did not read 3 parts/variables)
-	switch (identSize)
-	{
-		case 1:
-		{
-			cmdBufferSize = sscanf(cmdBuffer, "%3u%1s%d", &readID, ident, &value);
-			break;
-		}
-		case 2:
-		{
-			cmdBufferSize = sscanf(cmdBuffer, "%3u%2s%d", &readID, ident, &value);
-			break;
-		}
-		case 3:
-		{
-			cmdBufferSize = sscanf(cmdBuffer, "%3u%3s%d", &readID, ident, &value);
-			break;
-		}
-		case 4:
-		{
-			cmdBufferSize = sscanf(cmdBuffer, "%3u%4s%d", &readID, ident, &value);
-			break;
-		}
-		default:
-		{
-			lastCommStatus = LSS_CommStatus_ReadUnknown;
-			return (0);
-			break;
-		}
+		if ((c < '0') || (c > '9')) break;	// not a number character
+		readID = readID * 10 + c - '0';
+		valid_field = true;
 	}
 
-	if (cmdBufferSize != 3)
-	{
-		lastCommStatus = LSS_CommStatus_ReadWrongFormat;
-		return (0);
-	}
-	//> Check ID; exit if different
-	if (readID != id)
+	if ((!valid_field) || (readID != id))
 	{
 		lastCommStatus = LSS_CommStatus_ReadWrongID;
-		return (0);
-	}
-
-	//> Check identifier; exit if different
-	if (strcmp(ident, cmd))
-	{
-		lastCommStatus = LSS_CommStatus_ReadWrongIdentifier;
-		return (0);
-	}
-
-	// Return value (success)
-	lastCommStatus = LSS_CommStatus_ReadSuccess;
-	return (value);
-}
-
-// Read a string (char*)
-static char * LSS::genericRead_Blocking_str(uint8_t id, char * cmd)
-{
-	// Exit condition
-	if (bus == (Stream*) nullptr)
-	{
-		lastCommStatus = LSS_CommStatus_ReadNoBus;
+		// BUGBUG Should we clear out until CR?
 		return ((char *) nullptr);
-	}
+	} 
 
-	// Variables
-	identSize = strlen(cmd);
-	char ident[identSize + 1];
-	//char * cmdScan;
-
-	// Read from bus until first character; exit if not found before timeout
-	if (!(bus->find(LSS_CommandReplyStart)))
+	// Now lets validate the right CMD
+	for (;;)
 	{
-		lastCommStatus = LSS_CommStatus_ReadTimeout;
-		return ((char *) nullptr);
+		if (c != *cmd)
+		{
+			lastCommStatus = LSS_CommStatus_ReadWrongIdentifier;
+			return ((char *) nullptr);			
+		}
+		cmd++;
+		if (*cmd == '\0')
+			break;
+		c = LSS::timedRead();
 	}
+	size_t maxLength = (LSS_MaxTotalCommandLength - 1);
+	size_t index = 0;
 
-	// Read from bus until last character; exit if last character is not found before timeout
-	/*/
-	 cmdBufferSize = bus->readBytesUntil(LSS_CommandEnd, cmdBuffer, (LSS_MaxTotalCommandLength - 1));
-	 /*/
-	// TODO: Add as a proper function - replacement for readBytesUntil();
-	// ****************************************************************************
-	volatile size_t maxLength = (LSS_MaxTotalCommandLength - 1);
-	volatile size_t index = 0;
+
 	while (index < maxLength)
 	{
-		int c = LSS::timedRead();
-		if (c < 0 || c == LSS_CommandEnd)
+		c = LSS::timedRead();
+		if (c < 0 || c == LSS_CommandEnd[0])
 			break;
-		cmdBuffer[index] = (char) c;
+		value[index] = (char) c;
 		index++;
 	}
-	cmdBufferSize = index;
-	if (cmdBufferSize == 0)
+	value[index] = '\0';
+
+	// Return value (success)
+	if (c < 0) 
 	{
+		// did not get the ending CR
 		lastCommStatus = LSS_CommStatus_ReadTimeout;
 		return ((char *) nullptr);
 	}
 
-	// Add null terminator
-	cmdBuffer[cmdBufferSize] = 0;
+	lastCommStatus = LSS_CommStatus_ReadSuccess;
+	return value;
+}
 
-	// Parse result; exit if error (did not read 3 parts/variables)
-	switch (identSize)
+//==============================================================================
+int16_t LSS::genericRead_Blocking_s16(uint8_t id, const char * cmd)
+{
+	// Let the string function do all of the main parsing work.
+	char *valueStr = genericRead_Blocking_str(id, cmd);
+	if (valueStr == (char *) nullptr)
 	{
-		case 1:
-		{
-			cmdBufferSize = sscanf(cmdBuffer, "%3u%1s%s", &readID, ident, value);
-			break;
-		}
-		case 2:
-		{
-			cmdBufferSize = sscanf(cmdBuffer, "%3u%2s%s", &readID, ident, value);
-			break;
-		}
-		case 3:
-		{
-			cmdBufferSize = sscanf(cmdBuffer, "%3u%3s%s", &readID, ident, value);
-			break;
-		}
-		case 4:
-		{
-			cmdBufferSize = sscanf(cmdBuffer, "%3u%4s%s", &readID, ident, value);
-			break;
-		}
-		default:
-		{
-			lastCommStatus = LSS_CommStatus_ReadUnknown;
-			return (0);
-			break;
-		}
+		// the above method will have already set the error condition. 
+		return 0;
 	}
 
-	if (cmdBufferSize != 3)
+	// Exit condition
+	if (bus == (Stream*) nullptr)
 	{
-		lastCommStatus = LSS_CommStatus_ReadWrongFormat;
-		return ((char *) nullptr);
+		lastCommStatus = LSS_CommStatus_ReadNoBus;
+		return (0);
 	}
-	//> Check ID; exit if different
-	if (readID != id)
+
+	// convert the value string to value
+	int16_t value = 0;
+	int16_t value_sign = 1;
+	for(;;)
+	{
+		if ((*valueStr >= '0') && (*valueStr <= '9'))
+			value = value * 10 + *valueStr - '0';
+		else if (*valueStr == '-')
+			value_sign = -1;
+		else 
+			break;
+		valueStr++; 
+	}
+	// now see if we exited with valid number
+	if (*valueStr != '\0')
 	{
 		lastCommStatus = LSS_CommStatus_ReadWrongID;
 		return (0);
 	}
+	// return the computed value
+	return value * value_sign; 
+} 
 
-	//> Check identifier; exit if different
-	if (strcmp(ident, cmd))
-	{
-		lastCommStatus = LSS_CommStatus_ReadWrongIdentifier;
-		return ((char *) nullptr);
-	}
-
-	// Return value (success)
-	lastCommStatus = LSS_CommStatus_ReadSuccess;
-	return (value);
-}
 
 // -- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 // Public functions (instance) ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
@@ -501,8 +406,9 @@ uint8_t LSS::getServoID(void)
 // Set current servo ID (guards for safe range of [LSS_ID_Min, LSS_ID_Max])
 void LSS::setServoID(uint8_t id)
 {
-	if (id < LSS_ID_Min)
-		id = 0;
+	// LSS_ID_Min is 0 so this one does nothing
+	//if (id < LSS_ID_Min)
+	//	id = 0;
 	if (id > LSS_ID_Max)
 		id = LSS_ID_Max;
 	this->servoID = id;
@@ -793,8 +699,8 @@ int8_t LSS::getMaxSpeedRPM(LSS_QueryType queryType)
 LSS_LED_Color LSS::getColorLED(LSS_QueryType queryType)
 {
 	// Variables
-	LSS_LED_Color value = 0;
-
+	LSS_LED_Color value = LSS_LED_Black;  // was 0 but removed warning
+ 
 	// Ask servo for status; exit if it failed
 	if (!(LSS::genericWrite(this->servoID, LSS_QueryColorLED, queryType)))
 	{
@@ -812,7 +718,7 @@ LSS_LED_Color LSS::getColorLED(LSS_QueryType queryType)
 LSS_ConfigGyre LSS::getGyre(LSS_QueryType queryType)
 {
 	// Variables
-	LSS_ConfigGyre value = 0;
+	LSS_ConfigGyre value = (LSS_ConfigGyre)0;  // Note Not a valid value for this. 
 
 	// Ask servo for status; exit if it failed
 	if (!(LSS::genericWrite(this->servoID, LSS_QueryGyre, queryType)))
@@ -872,7 +778,7 @@ int16_t LSS::getFirstPosition(void)
 bool LSS::getIsFirstPositionEnabled(void)
 {
 	// Variables
-	volatile char * valueStr;
+	char * valueStr;
 
 	// Ask servo for status; exit if it failed
 	if (!(LSS::genericWrite(this->servoID, LSS_QueryFirstPosition)))
@@ -1206,6 +1112,7 @@ bool LSS::setAngularRange(uint16_t value, LSS_SetType setType)
 			break;
 		}
 	}
+	return false;
 }
 
 bool LSS::setMaxSpeed(uint16_t value, LSS_SetType setType)
@@ -1223,6 +1130,7 @@ bool LSS::setMaxSpeed(uint16_t value, LSS_SetType setType)
 			break;
 		}
 	}
+	return false;
 }
 
 bool LSS::setMaxSpeedRPM(int8_t value, LSS_SetType setType)
@@ -1240,6 +1148,7 @@ bool LSS::setMaxSpeedRPM(int8_t value, LSS_SetType setType)
 			break;
 		}
 	}
+	return false;
 }
 
 bool LSS::setColorLED(LSS_LED_Color value, LSS_SetType setType)
@@ -1257,6 +1166,7 @@ bool LSS::setColorLED(LSS_LED_Color value, LSS_SetType setType)
 			break;
 		}
 	}
+	return false;
 }
 
 bool LSS::setGyre(LSS_ConfigGyre value, LSS_SetType setType)
@@ -1274,6 +1184,7 @@ bool LSS::setGyre(LSS_ConfigGyre value, LSS_SetType setType)
 			break;
 		}
 	}
+	return false;
 }
 
 bool LSS::setFirstPosition(int16_t value)
@@ -1307,6 +1218,7 @@ bool LSS::setAngularStiffness(int8_t value, LSS_SetType setType)
 			break;
 		}
 	}
+	return false;
 }
 
 bool LSS::setAngularHoldingStiffness(int8_t value, LSS_SetType setType)
@@ -1324,6 +1236,7 @@ bool LSS::setAngularHoldingStiffness(int8_t value, LSS_SetType setType)
 			break;
 		}
 	}
+	return false;
 }
 
 bool LSS::setAngularAcceleration(int16_t value, LSS_SetType setType)
@@ -1341,6 +1254,7 @@ bool LSS::setAngularAcceleration(int16_t value, LSS_SetType setType)
 			break;
 		}
 	}
+	return false;
 }
 
 bool LSS::setAngularDeceleration(int16_t value, LSS_SetType setType)
@@ -1358,6 +1272,7 @@ bool LSS::setAngularDeceleration(int16_t value, LSS_SetType setType)
 			break;
 		}
 	}
+	return false;
 }
 
 bool LSS::setMotionControlEnabled(bool value)
