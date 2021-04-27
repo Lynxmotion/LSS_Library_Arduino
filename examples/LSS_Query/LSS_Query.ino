@@ -12,7 +12,9 @@
 // ID set to default LSS ID = 0
 #define LSS_ID		(0)
 #define LSS_BAUD	(LSS_DefaultBaud)
-#define LSS_SERIAL 	(Serial)
+// Choose the proper serial port for your platform
+#define LSS_SERIAL	(Serial)	// ex: Many Arduino boards
+//#define LSS_SERIAL	(Serial1)	// ex: Teensy
 
 // Create one LSS object
 LSS myLSS = LSS(LSS_ID);
