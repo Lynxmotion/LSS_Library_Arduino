@@ -244,11 +244,11 @@ public:
 #endif
 	static void initBus(HardwareSerial & s, uint32_t baud);
 	static void closeBus(void);
-	static bool genericWrite(uint8_t id, char * cmd);
-	static bool genericWrite(uint8_t id, char * cmd, int16_t value);
-	static bool genericWrite(uint8_t id, char * cmd, int16_t value, char * parameter, int16_t parameter_value);
-	static int16_t genericRead_Blocking_s16(uint8_t id, char * cmd);
-	static char * genericRead_Blocking_str(uint8_t id, char * cmd);
+	static bool genericWrite(uint8_t id, const char * cmd);
+	static bool genericWrite(uint8_t id, const char * cmd, int16_t value);
+	static bool genericWrite(uint8_t id, const char * cmd, int16_t value, const char * parameter, int16_t parameter_value);
+	static int16_t genericRead_Blocking_s16(uint8_t id, const char * cmd);
+	static char * genericRead_Blocking_str(uint8_t id, const char * cmd);
 
 	// Public attributes - Class
 
@@ -337,10 +337,7 @@ private:
 	static bool hardwareSerial;
 	static Stream * bus;
 	static LSS_LastCommStatus lastCommStatus;
-	static char cmdBuffer[LSS_MaxTotalCommandLength];
-	static volatile int8_t cmdBufferSize;
-	static volatile uint8_t readID;
-	static volatile uint8_t identSize;
+	static volatile unsigned int readID;
 	static char value[24];
 
 	// Private functions - Instance
