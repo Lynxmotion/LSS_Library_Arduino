@@ -12,6 +12,7 @@
 // ID set to default LSS ID = 0
 #define LSS_ID		(0)
 #define LSS_BAUD	(LSS_DefaultBaud)
+#define LSS_SERIAL 	(Serial)
 
 // Create one LSS object
 LSS myLSS = LSS(LSS_ID);
@@ -19,7 +20,7 @@ LSS myLSS = LSS(LSS_ID);
 void setup()
 {
 	// Initialize the LSS bus
-	LSS::initBus(Serial, LSS_BAUD);
+	LSS::initBus(LSS_SERIAL, LSS_BAUD);
 }
 
 void loop()
