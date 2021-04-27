@@ -9,6 +9,9 @@
 #include <LSS.h>
 
 #define LSS_BAUD	(LSS_DefaultBaud)
+// Choose the proper serial port for your platform
+#define LSS_SERIAL	(Serial)	// ex: Many Arduino boards
+//#define LSS_SERIAL	(Serial1)	// ex: Teensy
 
 // Create two LSS object; one for output (ID=0), one for input (ID=1)
 LSS myLSS_Output = LSS(0);
@@ -17,7 +20,7 @@ LSS myLSS_Input = LSS(1);
 void setup()
 {
 	// Initialize the LSS bus
-	LSS::initBus(Serial, LSS_BAUD);
+	LSS::initBus(LSS_SERIAL, LSS_BAUD);
 
 	// Initialize LSS output to position 0.0
 	myLSS_Output.move(0);
