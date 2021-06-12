@@ -17,6 +17,7 @@
 bool LSS::hardwareSerial;
 Stream * LSS::bus;
 LSS_LastCommStatus LSS::lastCommStatus = LSS_CommStatus_Idle;
+long LSS::_msg_char_timeout = LSS_Timeout;
 
 //> Command reading/writing
 volatile unsigned int LSS::readID;  // sscanf - assumes this
@@ -45,6 +46,13 @@ LSS::~LSS(void)
 
 // -- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 // Public functions (class)    ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+void LSS::setReadTimeouts(long start_response_timeout, long msg_char_timeout)
+{
+	_msg_char_timeout = msg_char_timeout;
+	bus->setTimeout(start_response_timeout);
+
+}
+
 
 int LSS::timedRead(void)
 {
@@ -55,7 +63,7 @@ int LSS::timedRead(void)
 		c = LSS::bus->read();
 		if (c >= 0)
 			return (c);
-	} while (millis() - startMillis < LSS_Timeout);
+	} while (millis() - startMillis < _msg_char_timeout);
 	return (-1);     // -1 indicates timeout
 }
 

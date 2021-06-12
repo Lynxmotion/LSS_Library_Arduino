@@ -33,6 +33,7 @@
 #endif
 
 // Constants
+#define LSS_SupportsSettingTimeouts
 //> String processing
 #define IS_AF(c)					((c >= 'A') && (c <= 'F'))
 #define IS_af(c)					((c >= 'a') && (c <= 'f'))
@@ -236,6 +237,7 @@ class LSS
 {
 public:
 	// Public functions - Class
+	static void setReadTimeouts(long start_response_timeout=LSS_Timeout, long msg_char_timeout=LSS_Timeout);
 	static int timedRead(void);
 	bool charToInt(char * inputstr, int32_t * intnum);
 	//static void initBus(Stream &, uint32_t);
@@ -339,7 +341,7 @@ private:
 	static LSS_LastCommStatus lastCommStatus;
 	static volatile unsigned int readID;
 	static char value[24];
-
+	static long _msg_char_timeout;   // timeout waiting for characters inside of packet
 	// Private functions - Instance
 
 	// Private attributes - Instance
