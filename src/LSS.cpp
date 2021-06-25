@@ -1027,6 +1027,25 @@ bool LSS::getIsMotionControlEnabled(void)
 	return (value);
 }
 
+int16_t LSS::getFilterPositionCount(LSS_QueryType queryType = LSS_QuerySession) {
+	// Variables
+	int16_t value = 0;
+
+	// Ask servo for status; exit if it failed
+	if (!(LSS::genericWrite(this->servoID, LSS_QueryFilterPositionCount, queryType)))
+	{
+		LSS::lastCommStatus = LSS_CommStatus_WriteNoBus;
+		return (value);
+	}
+
+	// Read response from servo
+	value = (int16_t) LSS::genericRead_Blocking_s16(this->servoID, LSS_QueryFilterPositionCount);
+
+	// Return result
+	return (value);
+	
+}
+
 uint8_t LSS::getBlinkingLED(void)
 {
 	// Variables

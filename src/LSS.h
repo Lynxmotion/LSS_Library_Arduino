@@ -312,6 +312,7 @@ public:
 	int16_t getAngularAcceleration(LSS_QueryType queryType = LSS_QuerySession);
 	int16_t getAngularDeceleration(LSS_QueryType queryType = LSS_QuerySession);
 	bool getIsMotionControlEnabled(void);
+	int16_t getFilterPositionCount(LSS_QueryType queryType = LSS_QuerySession);
 	uint8_t getBlinkingLED(void);
 
 	//> Configs
