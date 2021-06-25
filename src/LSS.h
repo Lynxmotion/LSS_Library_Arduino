@@ -180,6 +180,7 @@ enum LSS_LED_Color
 #define LSS_ActionAngularAcceleration		("AA")
 #define LSS_ActionAngularDeceleration		("AD")
 #define LSS_ActionEnableMotionControl		("EM")
+#define LSS_FilterPositionCount				("FPC")
 
 //> Commands - queries
 #define LSS_QueryStatus				("Q")
@@ -211,6 +212,7 @@ enum LSS_LED_Color
 #define LSS_QueryAngularAcceleration		("QAA")
 #define LSS_QueryAngularDeceleration		("QAD")
 #define LSS_QueryEnableMotionControl		("QEM")
+#define LSS_QueryFilterPositionCount		("QFPC")
 #define LSS_QueryBlinkingLED				("QLB")
 
 //> Commands - configurations
@@ -224,6 +226,7 @@ enum LSS_LED_Color
 #define LSS_ConfigGyreDirection				("CG")
 #define LSS_ConfigFirstPosition				("CFD")
 #define LSS_ConfigModeRC					("CRC")
+#define LSS_ConfigFilterPositionCount		("CFPC")
 
 //> Commands - configurations (advanced)
 #define LSS_ConfigAngularStiffness			("CAS")
@@ -328,6 +331,7 @@ public:
 	bool setAngularAcceleration(int16_t value, LSS_SetType setType = LSS_SetSession);
 	bool setAngularDeceleration(int16_t value, LSS_SetType setType = LSS_SetSession);
 	bool setMotionControlEnabled(bool value);
+	bool setFilterPositionCount(int16_t value, LSS_SetType setType = LSS_SetSession);
 	bool setBlinkingLED(uint8_t value);
 
 	// Public attributes - Instance

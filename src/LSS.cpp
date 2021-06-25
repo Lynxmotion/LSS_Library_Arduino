@@ -1288,6 +1288,26 @@ bool LSS::setMotionControlEnabled(bool value)
 	return (LSS::genericWrite(this->servoID, LSS_ActionEnableMotionControl, value));
 }
 
+bool LSS::setFilterPositionCount(int16_t value, LSS_SetType setType)
+{
+	
+	switch (setType)
+	{
+		case (LSS_SetSession):
+		{
+			return (LSS::genericWrite(this->servoID, LSS_FilterPositionCount, value));
+			break;
+		}
+		case (LSS_SetConfig):
+		{
+			return (LSS::genericWrite(this->servoID, LSS_ConfigFilterPositionCount, value));
+			break;
+		}
+	}
+	return false;
+}
+
+
 bool LSS::setBlinkingLED(uint8_t value)
 {
 	return (LSS::genericWrite(this->servoID, LSS_ConfigBlinkingLED, value));
