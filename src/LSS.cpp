@@ -17,6 +17,7 @@
 bool LSS::hardwareSerial;
 Stream * LSS::bus;
 LSS_LastCommStatus LSS::lastCommStatus = LSS_CommStatus_Idle;
+long LSS::_msg_char_timeout = LSS_Timeout;
 
 //> Command reading/writing
 volatile unsigned int LSS::readID;  // sscanf - assumes this
@@ -45,6 +46,13 @@ LSS::~LSS(void)
 
 // -- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 // Public functions (class)    ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+void LSS::setReadTimeouts(long start_response_timeout, long msg_char_timeout)
+{
+	_msg_char_timeout = msg_char_timeout;
+	bus->setTimeout(start_response_timeout);
+
+}
+
 
 int LSS::timedRead(void)
 {
@@ -55,7 +63,7 @@ int LSS::timedRead(void)
 		c = LSS::bus->read();
 		if (c >= 0)
 			return (c);
-	} while (millis() - startMillis < LSS_Timeout);
+	} while (millis() - startMillis < _msg_char_timeout);
 	return (-1);     // -1 indicates timeout
 }
 
@@ -1019,6 +1027,25 @@ bool LSS::getIsMotionControlEnabled(void)
 	return (value);
 }
 
+int16_t LSS::getFilterPositionCount(LSS_QueryType queryType = LSS_QuerySession) {
+	// Variables
+	int16_t value = 0;
+
+	// Ask servo for status; exit if it failed
+	if (!(LSS::genericWrite(this->servoID, LSS_QueryFilterPositionCount, queryType)))
+	{
+		LSS::lastCommStatus = LSS_CommStatus_WriteNoBus;
+		return (value);
+	}
+
+	// Read response from servo
+	value = (int16_t) LSS::genericRead_Blocking_s16(this->servoID, LSS_QueryFilterPositionCount);
+
+	// Return result
+	return (value);
+	
+}
+
 uint8_t LSS::getBlinkingLED(void)
 {
 	// Variables
@@ -1279,6 +1306,26 @@ bool LSS::setMotionControlEnabled(bool value)
 {
 	return (LSS::genericWrite(this->servoID, LSS_ActionEnableMotionControl, value));
 }
+
+bool LSS::setFilterPositionCount(int16_t value, LSS_SetType setType)
+{
+	
+	switch (setType)
+	{
+		case (LSS_SetSession):
+		{
+			return (LSS::genericWrite(this->servoID, LSS_FilterPositionCount, value));
+			break;
+		}
+		case (LSS_SetConfig):
+		{
+			return (LSS::genericWrite(this->servoID, LSS_ConfigFilterPositionCount, value));
+			break;
+		}
+	}
+	return false;
+}
+
 
 bool LSS::setBlinkingLED(uint8_t value)
 {

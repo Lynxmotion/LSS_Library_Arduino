@@ -14,6 +14,7 @@ LSS	KEYWORD1
 
 initBus	KEYWORD2
 closeBus	KEYWORD2
+setReadTimeouts	KEYWORD2
 genericWrite	KEYWORD2
 genericRead_Blocking_s16	KEYWORD2
 genericRead_Blocking_str	KEYWORD2
@@ -62,6 +63,7 @@ getAngularHoldingStiffness	KEYWORD2
 getAngularAcceleration	KEYWORD2
 getAngularDeceleration	KEYWORD2
 getIsMotionControlEnabled	KEYWORD2
+getFilterPositionCount	KEYWORD2
 getBlinkingLED	KEYWORD2
 
 setOriginOffset	KEYWORD2
@@ -79,6 +81,7 @@ setAngularHoldingStiffness	KEYWORD2
 setAngularAcceleration	KEYWORD2
 setAngularDeceleration	KEYWORD2
 setIsMotionControlEnabled	KEYWORD2
+setFilterPositionCount	KEYWORD2
 setBlinkingLED	KEYWORD2
 
 #######################################
@@ -201,6 +204,7 @@ LSS_ConfigMaxSpeed	LITERAL1
 LSS_ConfigMaxSpeedRPM	LITERAL1
 LSS_ConfigColorLED	LITERAL1
 LSS_ConfigGyreDirection	LITERAL1
+LSS_ConfigFilterPositionCount	LITERAL1
 LSS_ConfigFirstPosition	LITERAL1
 LSS_ConfigAngularStiffness	LITERAL1
 LSS_ConfigAngularHoldingStiffness	LITERAL1

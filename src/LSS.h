@@ -33,6 +33,7 @@
 #endif
 
 // Constants
+#define LSS_SupportsSettingTimeouts
 //> String processing
 #define IS_AF(c)					((c >= 'A') && (c <= 'F'))
 #define IS_af(c)					((c >= 'a') && (c <= 'f'))
@@ -179,6 +180,7 @@ enum LSS_LED_Color
 #define LSS_ActionAngularAcceleration		("AA")
 #define LSS_ActionAngularDeceleration		("AD")
 #define LSS_ActionEnableMotionControl		("EM")
+#define LSS_FilterPositionCount				("FPC")
 
 //> Commands - queries
 #define LSS_QueryStatus				("Q")
@@ -210,6 +212,7 @@ enum LSS_LED_Color
 #define LSS_QueryAngularAcceleration		("QAA")
 #define LSS_QueryAngularDeceleration		("QAD")
 #define LSS_QueryEnableMotionControl		("QEM")
+#define LSS_QueryFilterPositionCount		("QFPC")
 #define LSS_QueryBlinkingLED				("QLB")
 
 //> Commands - configurations
@@ -223,6 +226,7 @@ enum LSS_LED_Color
 #define LSS_ConfigGyreDirection				("CG")
 #define LSS_ConfigFirstPosition				("CFD")
 #define LSS_ConfigModeRC					("CRC")
+#define LSS_ConfigFilterPositionCount		("CFPC")
 
 //> Commands - configurations (advanced)
 #define LSS_ConfigAngularStiffness			("CAS")
@@ -236,6 +240,7 @@ class LSS
 {
 public:
 	// Public functions - Class
+	static void setReadTimeouts(long start_response_timeout=LSS_Timeout, long msg_char_timeout=LSS_Timeout);
 	static int timedRead(void);
 	bool charToInt(char * inputstr, int32_t * intnum);
 	//static void initBus(Stream &, uint32_t);
@@ -307,6 +312,7 @@ public:
 	int16_t getAngularAcceleration(LSS_QueryType queryType = LSS_QuerySession);
 	int16_t getAngularDeceleration(LSS_QueryType queryType = LSS_QuerySession);
 	bool getIsMotionControlEnabled(void);
+	int16_t getFilterPositionCount(LSS_QueryType queryType = LSS_QuerySession);
 	uint8_t getBlinkingLED(void);
 
 	//> Configs
@@ -326,6 +332,7 @@ public:
 	bool setAngularAcceleration(int16_t value, LSS_SetType setType = LSS_SetSession);
 	bool setAngularDeceleration(int16_t value, LSS_SetType setType = LSS_SetSession);
 	bool setMotionControlEnabled(bool value);
+	bool setFilterPositionCount(int16_t value, LSS_SetType setType = LSS_SetSession);
 	bool setBlinkingLED(uint8_t value);
 
 	// Public attributes - Instance
@@ -339,7 +346,7 @@ private:
 	static LSS_LastCommStatus lastCommStatus;
 	static volatile unsigned int readID;
 	static char value[24];
-
+	static long _msg_char_timeout;   // timeout waiting for characters inside of packet
 	// Private functions - Instance
 
 	// Private attributes - Instance
