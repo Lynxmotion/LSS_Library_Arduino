@@ -17,7 +17,7 @@
 bool LSS::hardwareSerial;
 Stream * LSS::bus;
 LSS_LastCommStatus LSS::lastCommStatus = LSS_CommStatus_Idle;
-long LSS::_msg_char_timeout = LSS_Timeout;
+uint32_t LSS::_msg_char_timeout = LSS_Timeout;
 
 //> Command reading/writing
 volatile unsigned int LSS::readID;  // sscanf - assumes this
@@ -46,7 +46,7 @@ LSS::~LSS(void)
 
 // -- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 // Public functions (class)    ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-void LSS::setReadTimeouts(long start_response_timeout, long msg_char_timeout)
+void LSS::setReadTimeouts(uint32_t start_response_timeout, uint32_t msg_char_timeout)
 {
 	_msg_char_timeout = msg_char_timeout;
 	bus->setTimeout(start_response_timeout);
@@ -1027,7 +1027,7 @@ bool LSS::getIsMotionControlEnabled(void)
 	return (value);
 }
 
-int16_t LSS::getFilterPositionCount(LSS_QueryType queryType = LSS_QuerySession) {
+int16_t LSS::getFilterPositionCount(LSS_QueryType queryType) {
 	// Variables
 	int16_t value = 0;
 
