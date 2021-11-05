@@ -15,7 +15,7 @@
 #define LSS_SupportSoftwareSerial
 // Uncomment the line below to disable software serial. This will prevent inclusion of the library, freeing some space.
 // By default, if you are not using SoftwareSerial anywhere, the compiler should remove it anyway.
-//#undef LSS_SupportSoftwareSerial
+#undef LSS_SupportSoftwareSerial
 
 // Ensure compatibility
 #if (ARDUINO >= 100)
